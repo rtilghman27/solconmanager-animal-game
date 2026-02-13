@@ -9,19 +9,22 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700;1,9..40,400&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #1a1625;
-      --card: #252030;
-      --card-hover: #2d2838;
-      --accent: #e8a838;
-      --accent-soft: rgba(232, 168, 56, 0.2);
-      --correct: #4ade80;
-      --correct-soft: rgba(74, 222, 128, 0.2);
-      --wrong: #f87171;
-      --wrong-soft: rgba(248, 113, 113, 0.2);
-      --text: #f5f0f7;
-      --text-muted: #9b8fa8;
-      --radius: 14px;
-      --shadow: 0 8px 32px rgba(0,0,0,0.35);
+      --bg: #0f0d14;
+      --bg-card: #1a1720;
+      --card: linear-gradient(145deg, #221e2a 0%, #1a1720 100%);
+      --card-hover: linear-gradient(145deg, #2a2635 0%, #221e2a 100%);
+      --accent: #f0b429;
+      --accent-soft: rgba(240, 180, 41, 0.18);
+      --correct: #34d399;
+      --correct-soft: rgba(52, 211, 153, 0.18);
+      --wrong: #f47272;
+      --wrong-soft: rgba(244, 114, 114, 0.18);
+      --text: #faf8fc;
+      --text-muted: #8b8199;
+      --radius: 16px;
+      --radius-sm: 12px;
+      --shadow: 0 10px 40px rgba(0,0,0,0.4);
+      --glow: 0 0 24px rgba(240, 180, 41, 0.15);
     }
 
     * {
@@ -37,8 +40,9 @@
       min-height: 100vh;
       padding: 2rem;
       background-image:
-        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(232, 168, 56, 0.12), transparent),
-        radial-gradient(ellipse 60% 40% at 100% 100%, rgba(120, 80, 200, 0.08), transparent);
+        radial-gradient(ellipse 100% 60% at 50% -30%, rgba(240, 180, 41, 0.08), transparent 50%),
+        radial-gradient(ellipse 80% 50% at 100% 80%, rgba(139, 92, 246, 0.06), transparent 50%),
+        radial-gradient(ellipse 60% 40% at 0% 50%, rgba(52, 211, 153, 0.04), transparent 50%);
     }
 
     .container {
@@ -52,36 +56,89 @@
     }
 
     h1 {
-      font-size: clamp(1.5rem, 4vw, 2rem);
+      font-size: clamp(1.6rem, 4vw, 2.25rem);
       font-weight: 700;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.03em;
       margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #faf8fc 0%, #d4cee0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     .subtitle {
       color: var(--text-muted);
-      font-size: 1rem;
+      font-size: 1.05rem;
     }
 
     .score-bar {
       display: flex;
       justify-content: center;
+      align-items: center;
       gap: 1.5rem;
       margin-bottom: 2rem;
       flex-wrap: wrap;
     }
 
     .score-item {
-      background: var(--card);
-      padding: 0.6rem 1.2rem;
-      border-radius: var(--radius);
+      background: var(--bg-card);
+      padding: 0.7rem 1.4rem;
+      border-radius: var(--radius-sm);
       font-weight: 600;
       font-size: 0.95rem;
+      border: 1px solid rgba(255,255,255,0.06);
     }
 
     .score-item span {
       color: var(--accent);
       margin-left: 0.25rem;
+    }
+
+    .tries-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .tries-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--correct);
+      opacity: 1;
+      transition: opacity 0.2s;
+    }
+
+    .tries-dot.lost {
+      background: var(--wrong);
+      opacity: 0.4;
+    }
+
+    .hint-box {
+      max-width: 500px;
+      margin: 0 auto 1.5rem;
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius-sm);
+      background: var(--wrong-soft);
+      border: 1px solid rgba(244, 114, 114, 0.3);
+      color: var(--text);
+      font-size: 0.95rem;
+      text-align: center;
+      display: none;
+    }
+
+    .hint-box.show {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .hint-box strong {
+      color: var(--accent);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .game-grid {
@@ -97,12 +154,20 @@
       }
     }
 
+    .column {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: var(--shadow);
+    }
+
     .column h2 {
-      font-size: 1rem;
+      font-size: 0.85rem;
       font-weight: 600;
       color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.1em;
       margin-bottom: 1rem;
       padding-left: 0.25rem;
     }
@@ -110,16 +175,16 @@
     .card-list {
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 0.65rem;
     }
 
     .card {
       background: var(--card);
       border: 2px solid transparent;
-      border-radius: var(--radius);
+      border-radius: var(--radius-sm);
       padding: 1rem 1.25rem;
       cursor: pointer;
-      transition: background 0.2s, border-color 0.2s, transform 0.15s;
+      transition: background 0.2s, border-color 0.2s, transform 0.15s, box-shadow 0.2s;
       display: flex;
       align-items: center;
       gap: 1rem;
@@ -130,18 +195,19 @@
       background: var(--card-hover);
       border-color: var(--accent-soft);
       transform: translateX(4px);
+      box-shadow: var(--glow);
     }
 
     .card.selected {
       border-color: var(--accent);
       background: var(--accent-soft);
+      box-shadow: var(--glow);
     }
 
     .card.matched {
       border-color: var(--correct);
-      background: var(--correct-soft);
+      background: linear-gradient(145deg, rgba(52, 211, 153, 0.2) 0%, rgba(52, 211, 153, 0.08) 100%);
       cursor: default;
-      opacity: 0.95;
     }
 
     .card.wrong {
@@ -157,8 +223,8 @@
     }
 
     .animal-card .card-img {
-      width: 56px;
-      height: 56px;
+      width: 52px;
+      height: 52px;
       border-radius: 10px;
       object-fit: cover;
       flex-shrink: 0;
@@ -176,10 +242,39 @@
       color: var(--text-muted);
     }
 
-    .win-overlay {
+    #confetti-container {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.7);
+      pointer-events: none;
+      z-index: 999;
+      overflow: hidden;
+    }
+
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      animation: confetti-fall 2.5s ease-out forwards;
+    }
+
+    @keyframes confetti-fall {
+      0% {
+        transform: translateY(-20px) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+      }
+    }
+
+    .win-overlay,
+    .gameover-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(6px);
       display: none;
       align-items: center;
       justify-content: center;
@@ -187,23 +282,33 @@
       padding: 2rem;
     }
 
-    .win-overlay.show {
+    .win-overlay.show,
+    .gameover-overlay.show {
       display: flex;
     }
 
-    .win-box {
-      background: var(--card);
+    .win-box,
+    .gameover-box {
+      background: linear-gradient(160deg, #221e2a 0%, #1a1720 100%);
       border-radius: 20px;
       padding: 2.5rem;
       text-align: center;
       max-width: 400px;
-      border: 2px solid var(--correct);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 24px 64px rgba(0,0,0,0.5);
       animation: pop 0.4s ease;
     }
 
+    .win-box {
+      border-top: 3px solid var(--correct);
+    }
+
+    .gameover-box {
+      border-top: 3px solid var(--wrong);
+    }
+
     @keyframes pop {
-      0% { transform: scale(0.9); opacity: 0; }
+      0% { transform: scale(0.92); opacity: 0; }
       100% { transform: scale(1); opacity: 1; }
     }
 
@@ -213,9 +318,23 @@
       color: var(--correct);
     }
 
-    .win-box p {
+    .gameover-box h3 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      color: var(--wrong);
+    }
+
+    .win-box p,
+    .gameover-box p {
       color: var(--text-muted);
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .gameover-actions {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      flex-wrap: wrap;
     }
 
     .btn {
@@ -223,11 +342,11 @@
       font-weight: 600;
       font-size: 1rem;
       padding: 0.75rem 1.5rem;
-      border-radius: var(--radius);
+      border-radius: var(--radius-sm);
       border: none;
       cursor: pointer;
       background: var(--accent);
-      color: var(--bg);
+      color: #0f0d14;
       transition: transform 0.15s, filter 0.15s;
     }
 
@@ -238,6 +357,39 @@
 
     .btn:active {
       transform: scale(0.98);
+    }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .reveal-list {
+      text-align: left;
+      margin-top: 1rem;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+
+    .reveal-list li {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.9rem;
+    }
+
+    .reveal-list li:last-child {
+      border-bottom: none;
+    }
+
+    .reveal-list img {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      object-fit: cover;
     }
   </style>
 </head>
@@ -250,7 +402,14 @@
 
     <div class="score-bar">
       <div class="score-item">Matches <span id="matches">0</span>/<span id="total">0</span></div>
-      <div class="score-item">Attempts <span id="attempts">0</span></div>
+      <div class="score-item tries-bar">
+        Tries left:
+        <div id="triesDots"></div>
+      </div>
+    </div>
+
+    <div class="hint-box" id="hintBox">
+      <span id="hintText"></span>
     </div>
 
     <div class="game-grid">
@@ -265,29 +424,53 @@
     </div>
   </div>
 
+  <div id="confetti-container"></div>
+
   <div class="win-overlay" id="winOverlay">
     <div class="win-box">
       <h3>You did it!</h3>
       <p>All managers are matched to their Slack animals.</p>
-      <p id="finalAttempts" class="score-item"></p>
       <button class="btn" id="playAgain">Play again</button>
+    </div>
+  </div>
+
+  <div class="gameover-overlay" id="gameoverOverlay">
+    <div class="gameover-box">
+      <h3>Out of tries</h3>
+      <p>You've used all 6 wrong guesses. Start over or reveal the answers.</p>
+      <div class="gameover-actions">
+        <button class="btn" id="startOverBtn">Start over</button>
+        <button class="btn btn-secondary" id="revealBtn">Reveal answers</button>
+      </div>
+      <div class="reveal-list" id="revealList" style="display: none;"></div>
     </div>
   </div>
 
   <script>
     const DATA = [
-      { name: 'Rachel Tilghman', animal: 'Golden Retriever', url: 'https://gladdogsnation.com/cdn/shop/articles/why-golden-retriever-is-the-best-breed-choice-for-a-young-family-1849396_1200x.jpg?v=1762876896' },
-      { name: 'Mike Origoni', animal: 'Beaver', url: 'https://i.pinimg.com/736x/7c/8c/85/7c8c85ee031debee38b4b0c8a20e9523.jpg' },
-      { name: 'Tom Josephson', animal: 'Dolphin', url: 'https://images.unsplash.com/photo-1539131258078-89aaa90dd845?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
-      { name: "Matt D'Abreu", animal: 'Busy Bee', url: 'https://www.snexplores.org/wp-content/uploads/sites/3/2025/03/1440_LL_bumblebees_feat.jpg?w=1030' },
-      { name: 'Nate Brunk', animal: 'Busy Bee', url: 'https://www.snexplores.org/wp-content/uploads/sites/3/2025/03/1440_LL_bumblebees_feat.jpg?w=1030' },
-      { name: 'Pierre Reymond', animal: 'Wolf', url: 'https://seethewild.org/wp-content/uploads/2025/02/great-plain-wolf-in-winter.jpg' },
-      { name: 'Dave Favicchio', animal: 'Golden Retriever', url: 'https://gladdogsnation.com/cdn/shop/articles/why-golden-retriever-is-the-best-breed-choice-for-a-young-family-1849396_1200x.jpg?v=1762876896' },
-      { name: 'Junior Castro', animal: 'Octopus', url: 'https://animalfactguide.com/wp-content/uploads/2024/01/common-octopus3.jpg' },
-      { name: 'Andy Trevino', animal: 'Dolphin', url: 'https://images.unsplash.com/photo-1539131258078-89aaa90dd845?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
-      { name: 'Kipp Johnson', animal: 'Honey Badger', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Honey_Badger.jpg/1280px-Honey_Badger.jpg' },
-      { name: 'Brendon Kellner', animal: 'Beaver', url: 'https://i.pinimg.com/736x/7c/8c/85/7c8c85ee031debee38b4b0c8a20e9523.jpg' }
+      { name: 'Rachel Tilghman', animal: 'Golden Retriever', url: 'https://gladdogsnation.com/cdn/shop/articles/why-golden-retriever-is-the-best-breed-choice-for-a-young-family-1849396_1200x.jpg?v=1762876896', hint: 'The Golden Retriever in the group is a problem-solver who stays positive, and is known for their always on the move energy and support.' },
+      { name: 'Mike Origoni', animal: 'Beaver', url: 'https://i.pinimg.com/736x/7c/8c/85/7c8c85ee031debee38b4b0c8a20e9523.jpg', hint: "The Beaver in the group is constantly building, organizing, and busy - plus they're building dams against competitors like Iterable and MoEngage." },
+      { name: 'Tom Josephson', animal: 'Dolphin', url: 'https://images.unsplash.com/photo-1539131258078-89aaa90dd845?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', hint: 'This Dolphin is highly social, collaborative and always in motion!' },
+      { name: "Matt D'Abreu", animal: 'Busy Bee', url: 'https://www.snexplores.org/wp-content/uploads/sites/3/2025/03/1440_LL_bumblebees_feat.jpg?w=1030', hint: 'The Busy Bee is constantly pollinating (knowledge-sharing), helping teammates with technical questions, and hive-minded, making sure everyone has what they need!' },
+      { name: 'Nate Brunk', animal: 'Busy Bee', url: 'https://www.snexplores.org/wp-content/uploads/sites/3/2025/03/1440_LL_bumblebees_feat.jpg?w=1030', hint: 'The Busy Bee is constantly pollinating (knowledge-sharing), helping teammates with technical questions, and hive-minded, making sure everyone has what they need!' },
+      { name: 'Pierre Reymond', animal: 'Wolf', url: 'https://seethewild.org/wp-content/uploads/2025/02/great-plain-wolf-in-winter.jpg', hint: 'The Wolf is strong, direct and protective of their pack. Plus they have a wolf-like circadian rhythm replying to slacks.' },
+      { name: 'Dave Favicchio', animal: 'Golden Retriever', url: 'https://gladdogsnation.com/cdn/shop/articles/why-golden-retriever-is-the-best-breed-choice-for-a-young-family-1849396_1200x.jpg?v=1762876896', hint: 'This Golden Retriever has a collaborative pack mentality, building connections and keeping the pack together, while being loyal & supportive - constantly showing up for the team.' },
+      { name: 'Junior Castro', animal: 'Octopus', url: 'https://animalfactguide.com/wp-content/uploads/2024/01/common-octopus3.jpg', hint: 'This Octopus has multiple arms handling everything at once, and is a problem solver extraordinaire!' },
+      { name: 'Andy Trevino', animal: 'Dolphin', url: 'https://images.unsplash.com/photo-1539131258078-89aaa90dd845?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', hint: 'This Dolphin is full of tricks, and always in motion!' },
+      { name: 'Kipp Johnson', animal: 'Honey Badger', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Honey_Badger.jpg/1280px-Honey_Badger.jpg', hint: 'This Honey Badger is a bit scrappy and resourceful, incredibly versatile and fearless about taking on tough challenges!' },
+      { name: 'Brendon Kellner', animal: 'Beaver', url: 'https://i.pinimg.com/736x/7c/8c/85/7c8c85ee031debee38b4b0c8a20e9523.jpg', hint: 'This Beaver is industrious and methodical, and also highly collaborative, working through complex problems.' }
     ];
+
+    // Hints describe the animal (shown when they click the wrong animal), not the person
+    const HINTS_BY_ANIMAL = {
+      'Golden Retriever': 'The Golden Retriever is a problem-solver who stays positive, with always-on-the-move energy and support.',
+      'Beaver': "The Beaver is constantly building, organizing, and busy—building dams against competitors like Iterable and MoEngage.",
+      'Dolphin': 'The Dolphin is highly social, collaborative and always in motion!',
+      'Busy Bee': 'The Busy Bee is constantly pollinating (knowledge-sharing), helping teammates with technical questions, and hive-minded, making sure everyone has what they need!',
+      'Wolf': 'The Wolf is strong, direct and protective of their pack, with a wolf-like circadian rhythm replying to Slacks.',
+      'Octopus': 'The Octopus has multiple arms handling everything at once, and is a problem solver extraordinaire!',
+      'Honey Badger': 'The Honey Badger is scrappy and resourceful, incredibly versatile and fearless about taking on tough challenges!'
+    };
 
     // Build unique animal entries (same animal+url can appear for multiple managers)
     const animalEntries = DATA.map((d, i) => ({ id: i, animal: d.animal, url: d.url }));
@@ -302,10 +485,12 @@
       return a;
     }
 
+    const MAX_WRONG = 6;
     let selectedManagerId = null;
     let matchedManagers = new Set();
     let matchedAnimals = new Set();
-    let attempts = 0;
+    let matchedPairs = [];
+    let wrongCount = 0;
     let currentManagerOrder = [];
     let currentAnimalOrder = [];
 
@@ -313,15 +498,62 @@
     const animalsEl = document.getElementById('animals');
     const totalEl = document.getElementById('total');
     const matchesEl = document.getElementById('matches');
-    const attemptsEl = document.getElementById('attempts');
+    const triesDotsEl = document.getElementById('triesDots');
+    const hintBox = document.getElementById('hintBox');
+    const hintText = document.getElementById('hintText');
     const winOverlay = document.getElementById('winOverlay');
-    const finalAttemptsEl = document.getElementById('finalAttempts');
+    const gameoverOverlay = document.getElementById('gameoverOverlay');
     const playAgainBtn = document.getElementById('playAgain');
+    const startOverBtn = document.getElementById('startOverBtn');
+    const revealBtn = document.getElementById('revealBtn');
+    const revealList = document.getElementById('revealList');
 
     totalEl.textContent = DATA.length;
 
+    function renderTriesDots() {
+      triesDotsEl.innerHTML = '';
+      for (let i = 0; i < MAX_WRONG; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'tries-dot' + (i >= MAX_WRONG - wrongCount ? ' lost' : '');
+        triesDotsEl.appendChild(dot);
+      }
+    }
+
+    function getOrderedManagers() {
+      const matchedIds = new Set(matchedPairs.map((p) => p.managerId));
+      const matchedFirst = matchedPairs.map((p) => managerEntries.find((m) => m.id === p.managerId));
+      const rest = currentManagerOrder.filter((m) => !matchedIds.has(m.id));
+      return [...matchedFirst, ...rest];
+    }
+
+    function getOrderedAnimals() {
+      const matchedIds = new Set(matchedPairs.map((p) => p.animalId));
+      const matchedFirst = matchedPairs.map((p) => animalEntries.find((a) => a.id === p.animalId));
+      const rest = currentAnimalOrder.filter((a) => !matchedIds.has(a.id));
+      return [...matchedFirst, ...rest];
+    }
+
+    function fireConfetti() {
+      const container = document.getElementById('confetti-container');
+      const colors = ['#f0b429', '#34d399', '#a78bfa', '#f47272', '#60a5fa', '#fbbf24'];
+      for (let i = 0; i < 50; i++) {
+        const c = document.createElement('div');
+        c.className = 'confetti';
+        c.style.left = Math.random() * 100 + '%';
+        c.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        c.style.animationDelay = Math.random() * 0.5 + 's';
+        c.style.width = (6 + Math.random() * 8) + 'px';
+        c.style.height = (6 + Math.random() * 8) + 'px';
+        container.appendChild(c);
+        setTimeout(() => c.remove(), 2600);
+      }
+    }
+
     function render() {
-      managersEl.innerHTML = currentManagerOrder.map((m) => {
+      const orderedManagers = getOrderedManagers();
+      const orderedAnimals = getOrderedAnimals();
+
+      managersEl.innerHTML = orderedManagers.map((m) => {
         const isMatched = matchedManagers.has(m.id);
         const isSelected = selectedManagerId === m.id;
         return `
@@ -331,7 +563,7 @@
         `;
       }).join('');
 
-      animalsEl.innerHTML = currentAnimalOrder.map((a) => {
+      animalsEl.innerHTML = orderedAnimals.map((a) => {
         const isMatched = matchedAnimals.has(a.id);
         return `
           <div class="card animal-card ${isMatched ? 'matched' : ''}" data-animal-id="${a.id}">
@@ -342,7 +574,7 @@
       }).join('');
 
       matchesEl.textContent = matchedManagers.size;
-      attemptsEl.textContent = attempts;
+      renderTriesDots();
 
       document.querySelectorAll('.manager-card').forEach((el) => {
         if (el.classList.contains('matched')) return;
@@ -358,6 +590,7 @@
     function selectManager(id) {
       if (matchedManagers.has(id)) return;
       selectedManagerId = id;
+      hintBox.classList.remove('show');
       render();
     }
 
@@ -365,17 +598,21 @@
       if (selectedManagerId == null || matchedAnimals.has(animalId)) return;
       const managerAnimal = DATA[selectedManagerId].animal;
       const clickedAnimal = animalEntries.find((a) => a.id === animalId);
-      attempts += 1;
       if (managerAnimal === clickedAnimal.animal) {
         matchedManagers.add(selectedManagerId);
         matchedAnimals.add(animalId);
+        matchedPairs.push({ managerId: selectedManagerId, animalId });
         selectedManagerId = null;
+        hintBox.classList.remove('show');
+        fireConfetti();
         render();
         if (matchedManagers.size === DATA.length) {
-          finalAttemptsEl.textContent = `Completed in ${attempts} attempt${attempts === 1 ? '' : 's'}.`;
           winOverlay.classList.add('show');
         }
       } else {
+        wrongCount += 1;
+        hintText.textContent = HINTS_BY_ANIMAL[clickedAnimal.animal] || `Hint: The ${clickedAnimal.animal} is one of the Slack animals—try matching again!`;
+        hintBox.classList.add('show');
         const managerCards = document.querySelectorAll(`.manager-card[data-manager-id="${selectedManagerId}"]`);
         const animalCards = document.querySelectorAll(`.animal-card[data-animal-id="${animalId}"]`);
         managerCards.forEach((c) => c.classList.add('wrong'));
@@ -383,6 +620,9 @@
         setTimeout(() => {
           selectedManagerId = null;
           render();
+          if (wrongCount >= MAX_WRONG) {
+            gameoverOverlay.classList.add('show');
+          }
         }, 600);
       }
     }
@@ -393,12 +633,28 @@
       selectedManagerId = null;
       matchedManagers = new Set();
       matchedAnimals = new Set();
-      attempts = 0;
+      matchedPairs = [];
+      wrongCount = 0;
+      hintBox.classList.remove('show');
       winOverlay.classList.remove('show');
+      gameoverOverlay.classList.remove('show');
+      revealList.style.display = 'none';
+      revealList.innerHTML = '';
       render();
     }
 
+    function showRevealAnswers() {
+      revealList.innerHTML = DATA.map(
+        (d) =>
+          `<li><img src="${d.url}" alt="" /><span><strong>${d.name}</strong> → ${d.animal}</span></li>`
+      ).join('');
+      revealList.style.display = 'block';
+      revealBtn.style.display = 'none';
+    }
+
     playAgainBtn.addEventListener('click', startGame);
+    startOverBtn.addEventListener('click', startGame);
+    revealBtn.addEventListener('click', showRevealAnswers);
 
     startGame();
   </script>
